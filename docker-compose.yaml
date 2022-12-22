@@ -1,3 +1,6 @@
+version: "3.8"
+name: "mataelang-sensor"
+
 volumes:
   snort_data:
 
