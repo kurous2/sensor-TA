@@ -127,3 +127,12 @@ After you can find the mount point path, you can go through the directory using 
 $ sudo ls /var/lib/docker/volumes/mataelang-sensor_snort_data/_data/ | grep pcap
 log.pcap.1671680168
 ```
+
+### Change PCAP Log Limit Size
+
+You can change the PCAP log limit size from Snort configuration file in `snort/snort.lua`. Here is the example configuration:
+```lua
+log_pcap = {
+    limit = 100, -- in MBytes
+}
+```
