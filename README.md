@@ -105,3 +105,25 @@ To disable auto updater:
 ```
 # ./run.sh update-rules
 ```
+
+### Get PCAP Files
+
+Usually, the default volume for snort_data is located in `/var/lib/docker/volumes/mataelang-sensor_snort_data/_data`. But, if you couldn't find it, you can check the mount point path using this command:
+
+```bash
+$ docker volume ls
+DRIVER    VOLUME NAME
+local     mataelang-sensor_snort_data
+```
+
+```bash
+$ docker volume inspect mataelang-sensor_snort_data | grep Mountpoint
+        "Mountpoint": "/var/lib/docker/volumes/mataelang-sensor_snort_data/_data",
+```
+
+After you can find the mount point path, you can go through the directory using the `sudo` command or `root` user and copy the PCAP files.
+
+```bash
+$ sudo ls /var/lib/docker/volumes/mataelang-sensor_snort_data/_data/ | grep pcap
+log.pcap.1671680168
+```
