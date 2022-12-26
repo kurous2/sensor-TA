@@ -136,3 +136,18 @@ log_pcap = {
     limit = 100, -- in MBytes
 }
 ```
+
+### Change Max number of PCAP Log to Keep on Disk
+
+You can also limit the number of PCAP log file that stored on Disk by change the value of `MAX_PCAP_FILES` (snort-parser) in `docker-compose.yaml` file.
+
+Example: 
+```yaml
+    ...
+      - MQTT_HOST=192.168.1.1
+      - MQTT_PORT=1883
+      # - MQTT_USERNAME=username
+      # - MQTT_PASSWORD=password
+      - MAX_PCAP_FILES=5
+    ...
+```
