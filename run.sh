@@ -52,7 +52,7 @@ docker_compose_path="${docker_compose_path} --project-directory $script_dir"
 if [ "$1" = "build" ]; then
     $docker_compose_path build
 elif [ "$1" = "update-rules" ]; then
-    $docker_compose_path build
+    $docker_compose_path build --no-cache
     $docker_compose_path up -d snort
 elif [ "$1" = "set-automation" ]; then
 	echo "setting crontab"
