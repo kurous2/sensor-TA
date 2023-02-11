@@ -273,23 +273,12 @@ def main():
             log.verbose(f' - Ruleset path:  {ruleset_path}')
 
             # process text rules
-            text_rules_path = join(ruleset_path, 'rules')
+            text_rules_path = join(ruleset_path, 'rules', '3.0.0.0')
             registered_rules = Rules(text_rules_path, conf.ignored_files)
             registered_policies = Policies(text_rules_path)
 
             log.debug(f' - Text Rules:  {registered_rules}')
             log.debug(f' - Text Policies:  {registered_policies}')
-
-            # process text rules for path changes of Februray 2023
-            text_rules_path_feb23 = join(ruleset_path, 'rules/3.0.0.0')
-            registered_rules_feb23 = Rules(text_rules_path_feb23, conf.ignored_files)
-            registered_policies_feb23 = Policies(text_rules_path_feb23)
-
-            log.debug(f' - Text Rules:  {registered_rules_feb23}')
-            log.debug(f' - Text Policies:  {registered_policies_feb23}')
-
-            registered_rules.extend(registered_rules_feb23)
-            registered_policies.extend(registered_policies_feb23)
 
             # process builtin rules
             builtin_rules_path = join(ruleset_path, 'builtins')
