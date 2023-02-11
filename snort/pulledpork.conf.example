@@ -112,4 +112,4 @@ distro = debian-x64
 #temp_path = /tmp
 
 # Pulledpork3 configuration version variable: may be used in future
-CONFIGURATION_NUMBER = 3.0.0.3
+CONFIGURATION_NUMBER = 3.0.0.0

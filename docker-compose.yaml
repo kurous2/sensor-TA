@@ -6,7 +6,11 @@ volumes:
 services:
   snort:
     build: 
-      context: snort/
+      context: ./
+      ## Please uncomment if you'd prefer to use the locally downloaded rule instead of the downloaded version
+      # dockerfile: snort/offline.Dockerfile
+      # args:
+        # RULE_FILENAME: snortrules-snapshot-31470.tar.gz
     network_mode: host
     restart: always
     environment:
