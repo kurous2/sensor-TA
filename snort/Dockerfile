@@ -4,6 +4,10 @@ COPY pulledpork.conf /usr/local/etc/pulledpork/pulledpork.conf
 COPY snort.lua /usr/local/etc/snort/snort.lua
 COPY local.rules /usr/local/etc/rules/local.rules
 
+# Patch for path changes of Februray 2023
+COPY ./src/pulledpork.py.feb23 /usr/local/bin/pulledpork.py
+RUN chmod +x /usr/local/bin/pulledpork.py
+
 RUN pulledpork.py -c /usr/local/etc/pulledpork/pulledpork.conf
 
 COPY start.sh /usr/local/bin/start-sensor.sh
