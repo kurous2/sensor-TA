@@ -13,24 +13,36 @@ API_ENDPOINT="http://10.10.10.250:8001/api/sensors"
 # Send the cURL request and store the response in a variable
 response=$(curl -s -X POST "${API_ENDPOINT}/login" \
 -H 'Content-Type: application/json' \
--d '{"uuid":"'${UUID}'"}')
+-d '{"uuid":"'${UUID}'"}' --max-time 5)
+
+if [[ $? -ne 0 ]]; then
+  echo "Connection failed or timed out"
+  exit 1
+fi
+
+NAME=$(echo "${response}" | grep -o '"name":[^,}]*' | cut -d'"' -f4)
+
+if [[ $NAME -eq "" ]]; then
+  printf "Invalid UUID\n"
+  exit 1
+fi
 
 #add check if response is valid. important
 
 YAML_FILE="$script_dir/docker-compose.yaml"
-PORK_FILE="$script_dir/snort/pulledpork.conf"
+
 HOME_NET_FILE="$script_dir/snort/snort.lua"
 # Set the variable name and new value
 
 PROTECTED_SUBNET=$(echo "${response}" | grep -o '"protected_subnet":[^,}]*' | cut -d'"' -f4 | sed 's/\\\//\//g')
 NET_INT=$(echo "${response}" | grep -o '"network_interface":[^,}]*' | cut -d'"' -f4)
-NAME=$(echo "${response}" | grep -o '"name":[^,}]*' | cut -d'"' -f4)
+#NAME=$(echo "${response}" | grep -o '"name":[^,}]*' | cut -d'"' -f4)
 MQTT_HOST=$(echo "${response}" | grep -o '"mqtt_ip":"[^"]*' | cut -d'"' -f4)
 MQTT_PORT=$(echo "${response}" | grep -o '"mqtt_port":[^,}]*' | cut -d'"' -f4)
 OINKCODE=$(echo "$response" | grep -o '"oinkcode":[^,}]*' | cut -d'"' -f4)
 MQTT_USERNAME="mataelang"
 MQTT_PASSWORD="mataelang"
-echo $MQTT_HOST
+#echo $MQTT_HOST
 sed -i "s/\(- NETWORK_INTERFACE=\).*/\1${NET_INT}/" "${YAML_FILE}"
 sed -i "s/\(- MQTT_HOST=\).*/\1${MQTT_HOST}/" "${YAML_FILE}"
 sed -i "s/\(- MQTT_PORT=\).*/\1${MQTT_PORT}/" "${YAML_FILE}"
@@ -38,7 +50,7 @@ sed -i "s/\(- MQTT_USERNAME=\).*/\1${MQTT_USERNAME}/" "${YAML_FILE}"
 sed -i "s/\(- MQTT_PASSWORD=\).*/\1${MQTT_PASSWORD}/" "${YAML_FILE}"
 sed -i "s/\(- SENSOR_ID=\).*/\1${NAME}/" "${YAML_FILE}"
 
-sed -i "s/oinkcode = .*/oinkcode = $OINKCODE/" "${PORK_FILE}"
+
 
 sed -i "s|HOME_NET = '.*'|HOME_NET = '$PROTECTED_SUBNET'|" "${HOME_NET_FILE}"
 
@@ -46,29 +58,8 @@ FILE=$pulledpork_path/pulledpork.conf
 if [ ! -f "$FILE" ]; then
     cp "$pulledpork_path/pulledpork.conf.example" "$pulledpork_path/pulledpork.conf"
 fi
-
-if [ "$1" = "test" ]; then 
-	echo "CRON RUNNER TEST PATH"
-	echo $PATH
-	echo $script_path
-	pwd
-	exit 1
-fi
-
-check_crontab(){
-	if [ -z "$(crontab -l | grep $script_path)" ]; then
-		echo "crontab exists"
-	fi
-}
-
-unset_crontab(){
-	crontab -l | grep -v $script_path | crontab -
-}
-
-set_crontab(){
-	unset_crontab
-	(crontab -l ; echo "$cron_schedule $script_path update-rules >> $script_dir/run.log") | crontab -
-}
+PORK_FILE="$script_dir/snort/pulledpork.conf"
+sed -i "s/oinkcode = .*/oinkcode = $OINKCODE/" "${PORK_FILE}"
 
 docker_compose_path="docker-compose"
 
@@ -91,21 +82,9 @@ if ! docker compose version &>/dev/null; then
 fi
 
 docker_compose_path="${docker_compose_path} --project-directory $script_dir"
-echo $docker_compose_path
-if [ "$1" = "build" ]; then
-    $docker_compose_path build
-elif [ "$1" = "update-rules" ]; then
-    $docker_compose_path build --no-cache
-    $docker_compose_path up -d snort
-elif [ "$1" = "set-automation" ]; then
-	echo "setting crontab"
-	set_crontab
-elif [ "$1" = "unset-automation" ]; then
-	echo "unsetting crontab"
-	unset_crontab
-else
-    $docker_compose_path -f $script_dir/docker-compose.yaml up -d
-fi
+#echo $docker_compose_path
+
+$docker_compose_path -f $script_dir/docker-compose.yaml up -d
 
 chmod +x $script_dir/checkcron.sh
 

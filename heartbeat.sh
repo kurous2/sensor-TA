@@ -22,5 +22,11 @@ response=$(curl -f -s -X POST \
 	"${API_ENDPOINT2}/heartbeat" \
 	-H 'Content-Type: application/json' \
 	-H 'Authorization: Bearer '${TOKEN}'' \
-	-d '{"uuid":"'${UUID}'"}')
+	-d '{"uuid":"'${UUID}'", "isActive":1}')
+else
+response=$(curl -f -s -X POST \
+	"${API_ENDPOINT2}/heartbeat" \
+	-H 'Content-Type: application/json' \
+	-H 'Authorization: Bearer '${TOKEN}'' \
+	-d '{"uuid":"'${UUID}'", "isActive":0}')
 fi
