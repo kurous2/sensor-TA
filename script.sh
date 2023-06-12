@@ -22,7 +22,7 @@ fi
 
 NAME=$(echo "${response}" | grep -o '"name":[^,}]*' | cut -d'"' -f4)
 
-if [[ $NAME -eq "" ]]; then
+if [[ $NAME = "" ]]; then
   printf "Invalid UUID\n"
   exit 1
 fi

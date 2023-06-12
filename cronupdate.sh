@@ -20,7 +20,7 @@ STATUS=$(echo "${DATA}" | grep -o '"status":[^,}]*' | cut -d'"' -f4)
 ID=$(echo "${DATA}" | grep -o '"id":[^,}]*' | cut -d: -f2)
 TOKEN=$(echo "${DATA}" | grep -o '"access_token":[^,}]*' | cut -d'"' -f4)
 chmod +x $script_dir/script.sh
-if [ "$STATUS" = "update on progress" ]; then
+if [[ "$STATUS" = "update on progress" ]]; then
 $script_dir/script.sh >> $script_dir/run.log 2>&1
 response=$(curl -f -s -X PATCH \
 	"${API_ENDPOINT2}/update_status/${ID}" \
