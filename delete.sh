@@ -21,6 +21,6 @@ STATUS=$(echo "${DATA}" | grep -o '"status":[^,}]*' | cut -d'"' -f4)
 
 if [[ "$STATUS" = "deleted" ]]; then
    rm "$script_dir/.env"
-   crontab -l | grep -v cronupdate | crontab -
+   crontab -l | grep -v $script_dir | crontab -
    $docker_compose_path -f $script_dir/docker-compose.yaml down -v
 fi
